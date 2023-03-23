@@ -1,8 +1,7 @@
-// WebCall Copyright 2021 timur.mobi. All rights reserved.
+// WebCall Copyright 2023 timur.mobi. All rights reserved.
 package main
 
 import (
-//	"fmt"
 	"log"
 	"strconv"
 	"strings"
