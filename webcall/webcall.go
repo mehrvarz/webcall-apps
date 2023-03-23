@@ -4,7 +4,7 @@ import (
 	"log"
 	"fmt"
 	"flag"
-//	"time"
+	"time"
 //	"net"
 //	"net/http"
 	"os"
@@ -14,9 +14,18 @@ import (
 //	"runtime"
 //	"sync"
 	"strings"
+	"encoding/json"
 	"gopkg.in/ini.v1"
 	"github.com/zserge/lorca"
 )
+
+// Cookie struct
+type Cookie struct {
+	Domain  string  `json:"domain"`
+	Name    string  `json:"name"`
+	Value   string  `json:"value"`
+	Expires float64 `json:"expires"`
+}
 
 /*
 // Go types that are bound to the UI must be thread-safe, because each binding
@@ -58,6 +67,11 @@ func main() {
 	//log.Println("start...",len(flag.Args()), flag.Args())
 	//log.Printf("bg=%v\n",*bg)
 
+	homedir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("# UserHomeDir err=%v\n",err)
+	}
+
 	domain := "timur.mobi"
 	calleeId := ""
 	calleeUrl := ""
@@ -69,12 +83,8 @@ func main() {
 		configIni, err := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true,},configFileName)
 		if err != nil {
 			// read config from home ini file
-			dirname, err := os.UserHomeDir()
-			if err != nil {
-				log.Fatal(err)
-			}
 			configFileName = "~/.webcall.ini"
-			configFile := strings.Replace(configFileName,"~",dirname,1)
+			configFile := strings.Replace(configFileName,"~",homedir,1)
 			log.Printf("try home config file %s\n",configFile)
 			configIni, err = ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true,},configFile)
 			if err != nil {
@@ -121,7 +131,7 @@ func main() {
 				calleeId = flag.Arg(1)
 				log.Printf("domain=%s calleeId=%s\n",domain,calleeId)
 			} else {
-// TODO support "calleeId@domain"
+				// support "calleeId@domain"
 				idxAt := strings.Index(flag.Arg(0),"@")
 				if idxAt>=0 {
 					calleeId = flag.Arg(0)[:idxAt]
@@ -166,14 +176,28 @@ func main() {
 	}
 
 	// this is the daemonized process
+
 	args := []string{} // "--start-fullscreen"
 	log.Printf("lorca.New args=%v\n",args)
-	ui, err := lorca.New("", "", 480, 520)
+//	webcalldir := ""
+	webcalldir := homedir+"/.webcall/"
+	ui, err := lorca.New("", webcalldir, 480, 520)
 	if err != nil {
 		// most likely: cannot find /usr/lib/chromium/chromium
 		log.Fatalf("# lorca.New ui=%v err=%v\n",ui,err)
+		// TODO empty chrome window may stay open
 	}
 	defer ui.Close()
+
+	if separator=="/user/" {
+		cookieHuman := Cookie{"timur.mobi","webcalluser","human",float64(time.Now().Unix()+500000)}
+		res := map[string]interface{}{}
+		raw, _ := json.Marshal(cookieHuman)
+		//log.Printf("cookie raw (%v)\n",raw)
+		_ = json.Unmarshal(raw, &res)
+		//log.Printf("cookie res (%v)\n",res)
+		ui.Send("Network.setCookie", res)
+	}
 
 	log.Println("ui.Bind('start')...")
 	// A simple way to know when UI is ready (uses body.onload event in JS)
@@ -198,6 +222,7 @@ func main() {
 	defer ln.Close()
 	go http.Serve(ln, http.FileServer(FS))
 */
+	log.Printf("ui.Load...")
 	ui.Load(calleeUrl)
 
 /*
