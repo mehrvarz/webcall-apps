@@ -1,4 +1,3 @@
 package main
 
-const separator = "/callee/"
-
+const apptype = "callee"

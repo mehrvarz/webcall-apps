@@ -1,4 +1,3 @@
 package main
 
-const separator = "/user/"
-
+const apptype = "user"

@@ -76,7 +76,7 @@ func main() {
 	calleeId := ""
 	calleeUrl := ""
 
-	if separator=="/callee/" {
+	if apptype=="callee" {
 		// callee mode: read config from local ini file
 		configFileName := "webcall.ini"
 		log.Printf("try local config file %s\n",configFileName)
@@ -112,7 +112,7 @@ func main() {
 						log.Printf("cfg calleeId=%s\n",calleeId)
 					}
 					if domain!="" && calleeId!="" {
-						calleeUrl = "https://"+domain+separator+calleeId
+						calleeUrl = "https://"+domain+"/"+apptype+"/"+calleeId
 						//log.Printf("cfg calleeUrl=%s\n",calleeUrl)
 					}
 				}
@@ -142,7 +142,7 @@ func main() {
 				log.Printf("calleeId=%s\n",calleeId)
 			}
 			if domain!="" && calleeId!="" {
-				calleeUrl = "https://"+domain+separator+calleeId
+				calleeUrl = "https://"+domain+"/"+apptype+"/"+calleeId
 				//log.Printf("calleeUrl=%s\n",calleeUrl)
 			}
 		}
@@ -150,8 +150,8 @@ func main() {
 
 	if calleeUrl=="" {
 		if calleeId!="" {
-			if separator=="/user/" {
-// TODO for webcall (separator=="/user/") there should be a way to enter the target calleeId (and the domain) via UI
+			if apptype=="user" {
+// TODO there should be a way for the user to enter the target calleeId (and the domain) via UI
 			}
 		}
 		if calleeId!="" {
@@ -180,7 +180,7 @@ func main() {
 	args := []string{} // "--start-fullscreen"
 	log.Printf("lorca.New args=%v\n",args)
 //	webcalldir := ""
-	webcalldir := homedir+"/.webcall/"
+	webcalldir := homedir+"/.webcall/"+apptype+"/"
 	ui, err := lorca.New("", webcalldir, 480, 520)
 	if err != nil {
 		// most likely: cannot find /usr/lib/chromium/chromium
@@ -189,7 +189,7 @@ func main() {
 	}
 	defer ui.Close()
 
-	if separator=="/user/" {
+	if apptype=="user" {
 		cookieHuman := Cookie{"timur.mobi","webcalluser","human",float64(time.Now().Unix()+500000)}
 		res := map[string]interface{}{}
 		raw, _ := json.Marshal(cookieHuman)
