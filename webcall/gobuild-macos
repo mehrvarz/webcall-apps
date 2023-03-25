@@ -8,5 +8,5 @@ then
   echo "version ${VERSIONTAG##*$'\n'}" # last line of git tag
 fi
 foldername=${PWD##*/}
-export GOARCH= && export GOOS=darwin && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS/$foldername
+export GOARCH= && export GOOS=darwin && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-macos/$foldername
 
