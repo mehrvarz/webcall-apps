@@ -15,11 +15,17 @@ export GOARCH=amd64 && export GOOS=linux && go build -ldflags "-s -w -X main.bui
 echo "build ../bin-linux-386/$foldername"
 export GOARCH=386 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 
+echo "build ../bin-linux-arm64/$foldername"
+export GOARCH=arm64 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
 echo "build ../bin-freebsd-amd64/$foldername"
 export GOARCH=amd64 && export GOOS=freebsd && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 
 echo "build ../bin-freebsd-386/$foldername"
 export GOARCH=386 && export GOOS=freebsd && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-freebsd-arm64/$foldername"
+export GOARCH=arm64 && export GOOS=freebsd && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 
 echo "build ../bin-macos-amd64/$foldername"
 export GOARCH=amd64 && export GOOS=darwin && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-macos-$GOARCH/$foldername
@@ -29,4 +35,7 @@ export GOARCH=arm64 && export GOOS=darwin && go build -ldflags "-s -w -X main.bu
 
 echo "build ../bin-windows-amd64/$foldername"
 export GOARCH=amd64 && export GOOS=windows && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-windows-arm64/$foldername"
+export GOARCH=arm64 && export GOOS=windows && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 
