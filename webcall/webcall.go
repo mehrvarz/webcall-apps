@@ -142,27 +142,19 @@ func main() {
 				}
 				log.Printf("calleeId=%s\n",calleeId)
 			}
-			if domain!="" && calleeId!="" {
+			if domain!="" /*&& calleeId!=""*/ {
 				calleeUrl = "https://"+domain+"/"+apptype+"/"+calleeId
 				//log.Printf("calleeUrl=%s\n",calleeUrl)
 			}
 		}
 	}
 
-	if calleeUrl=="" {
-		if calleeId!="" {
-			if apptype=="user" {
-// TODO there should be a way for the user to enter the target calleeId (and the domain) via UI
-			}
-		}
-		if calleeId!="" {
-			log.Fatalf("# missing calleeId\n")
-		}
-		if domain!="" {
-			log.Fatalf("# missing domain name\n")
-		}
+	if calleeId=="" && apptype=="callee" {
+		log.Fatalf("# missing calleeId (apptype==callee)\n")
 	}
-	log.Printf("calleeUrl=%s\n",calleeUrl)
+	if domain=="" {
+		log.Fatalf("# missing domain name (calleeId=%s)\n",calleeId)
+	}
 
 	// daemonize this process (by spawning a bg-child)
 	if !*bg {
