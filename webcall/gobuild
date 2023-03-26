@@ -9,9 +9,9 @@ then
 fi
 foldername=${PWD##*/}
 
-echo "build ../bin-linux-$GOARCH/$foldername"
-export GOARCH=386 && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-linux-$GOARCH/$foldername
+echo "build ../bin-linux-amd64/$foldername"
+export GOARCH=amd64 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 
-echo "build ../bin-linux-$GOARCH/$foldername"
-export GOARCH=amd64 && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-linux-$GOARCH/$foldername
+echo "build ../bin-linux-386/$foldername"
+export GOARCH=386 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
 

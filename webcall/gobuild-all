@@ -1,0 +1,32 @@
+# build script for webcall apps copyright 2023 timur.mobi
+export BUILDDATE=`date --rfc-3339=date`
+echo "builddate $BUILDDATE"
+export VERSIONTAG=
+if [[ -f ../.git/config ]]
+then
+  export VERSIONTAG=`git describe --tags --abbrev=0`
+  echo "version ${VERSIONTAG##*$'\n'}" # last line of git tag
+fi
+foldername=${PWD##*/}
+
+echo "build ../bin-linux-amd64/$foldername"
+export GOARCH=amd64 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-linux-386/$foldername"
+export GOARCH=386 && export GOOS=linux && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-freebsd-amd64/$foldername"
+export GOARCH=amd64 && export GOOS=freebsd && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-freebsd-386/$foldername"
+export GOARCH=386 && export GOOS=freebsd && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
+echo "build ../bin-macos-amd64/$foldername"
+export GOARCH=amd64 && export GOOS=darwin && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-macos-$GOARCH/$foldername
+
+echo "build ../bin-macos-arm64/$foldername"
+export GOARCH=arm64 && export GOOS=darwin && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-macos-$GOARCH/$foldername
+
+echo "build ../bin-windows-amd64/$foldername"
+export GOARCH=amd64 && export GOOS=windows && go build -ldflags "-s -w -X main.builddate=$BUILDDATE -X main.codetag=${VERSIONTAG##*$'\n'}" -o ../bin-$GOOS-$GOARCH/$foldername
+
