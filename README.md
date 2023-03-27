@@ -44,6 +44,7 @@ Alternatively you can also provide the complete WebCall link:
 
 >webcall <span style="display: inline">http5://timur.mobi/user/30040044444</span>
 
+The app will start in it's own window.
 Click [Dial] (or hit tab return) to start dialing.
 
 ![Screenshot of ...](resources/webcall-screenshot1.png)
