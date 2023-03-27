@@ -40,6 +40,10 @@ You can make calls by entering a command like this into a terminal window:
 
 >webcall 30040044444
 
+Alternatively you can also provide the complete WebCall link:
+
+>webcall <span style="display: inline">https://timur.mobi/user/30040044444</span>
+
 Click [Dial] (or hit tab return) to start dialing.
 
 ![Screenshot of ...](resources/webcall-screenshot1.png)
