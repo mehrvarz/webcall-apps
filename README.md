@@ -6,7 +6,7 @@ Two WebRTC telephony apps:
 
 - callee (to receive and make calls)
 
-available for the following OS / architecture configurations:
+for the following OS / architecture configurations:
 
 - linux-amd64, linux-386, linux-arm64
 
@@ -53,7 +53,7 @@ Start it again to make another call.
 ## callee app
 
 The callee app let's you receive web telephony calls. To do so, you will need a unique target ID.
-If you don't have a target ID yet, go register one here: https://timur.mobi/callee/register
+If you don't have a target ID yet, go register one (or more) here: https://timur.mobi/callee/register
 
 You can then start receiving calls like this:
 
@@ -96,6 +96,7 @@ To build webcall-apps, the two source code folders (webcall-app and the forked l
 # License
 
 AGPL3.0 - see: [LICENSE](LICENSE)
+
 
 ## 3rd party code
 
