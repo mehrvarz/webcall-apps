@@ -83,6 +83,22 @@ If a call comes in, the app will play a ringtone.
 You can also use the callee app to make calls, for instance via the Contacts widget
 or via a Missed call entry.
 
+# Building
+
+You need Go (1.16+) installed. To build the two apps, you need to switch to both subdirectories (webcall and callee) separately.
+
+Build for the current OS / architecture:
+
+>./gobuild
+
+Build for all supported OS / architectures:
+
+>./gobuild-all
+
+Note that the current release of webcall-apps make use of a forked https://github.com/mehrvarz/lorca
+To build webcall-apps, the two source code folder (webcall-app and the forked lorca) need to be located side by side.
+
+
 # License
 
 AGPL3.0 - see: [LICENSE](LICENSE)
