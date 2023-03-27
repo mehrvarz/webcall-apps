@@ -95,8 +95,8 @@ Build for all supported OS / architectures:
 
 >./gobuild-all
 
-Note that the current release of webcall-apps make use of a forked https://github.com/mehrvarz/lorca
-To build webcall-apps, the two source code folder (webcall-app and the forked lorca) need to be located side by side.
+Note that the current release of webcall-apps make use of a forked https://github.com/mehrvarz/lorca.
+To build webcall-apps, the two source code folders (webcall-app and the forked lorca) need to be located side by side.
 
 
 # License
