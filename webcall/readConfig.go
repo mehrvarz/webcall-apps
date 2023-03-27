@@ -35,7 +35,7 @@ func readIniBoolean(configIni *ini.File, cfgKeyword string, currentVal bool, def
 	}
 	if currentVal != newVal {
 		isDefault:=""; if newVal==defaultValue { isDefault="*" }
-		log.Printf("readIniBoolean %s=%v%s\n", cfgKeyword, newVal, isDefault)
+		log.Printf("[INFO] readIniBoolean %s=%v%s\n", cfgKeyword, newVal, isDefault)
 	}
 	currentVal = newVal
 	return currentVal
@@ -47,14 +47,14 @@ func readIniInt(configIni *ini.File, cfgKeyword string, currentVal int, defaultV
 	if ok && cfgValue!="" {
 		i64, err := strconv.ParseInt(cfgValue, 10, 64)
 		if err != nil {
-			log.Printf("# readIniInt   %s=%v err=%v\n", cfgKeyword, cfgValue, err)
+			log.Printf("[ERROR] readIniInt   %s=%v err=%v\n", cfgKeyword, cfgValue, err)
 		} else {
 			newVal = int(i64) * factor
 		}
 	}
 	if newVal != currentVal {
 		isDefault:=""; if newVal==defaultValue { isDefault="*" }
-		log.Printf("readIniInt   %s=%d%s\n", cfgKeyword, newVal, isDefault)
+		log.Printf("[INFO] readIniInt   %s=%d%s\n", cfgKeyword, newVal, isDefault)
 	}
 	currentVal = newVal
 	return currentVal
@@ -66,13 +66,9 @@ func readIniString(configIni *ini.File, cfgKeyword string, currentVal string, de
 	if ok && cfgValue != "" {
 		newVal = cfgValue
 	}
-	// don't log entries ending in 'Key' or 'Secret'
-	if newVal!=currentVal &&
-			!strings.HasSuffix(cfgKeyword, "Key") && 
-			!strings.HasSuffix(cfgKeyword, "Secret") &&
-			!strings.HasSuffix(cfgKeyword, "mastodonhandler") {
+	if newVal!=currentVal {
 		isDefault:=""; if newVal==defaultValue { isDefault="*" }
-		log.Printf("readIniString   %s=(%v)%s\n", cfgKeyword, newVal, isDefault)
+		log.Printf("[INFO] readIniString   %s=(%v)%s\n", cfgKeyword, newVal, isDefault)
 	}
 	currentVal = newVal
 	return currentVal
