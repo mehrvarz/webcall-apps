@@ -19,7 +19,7 @@ for the following OS / architecture configurations:
 
 # Installation
 
-Download binary apps v1.0: https://timur.mobi/webcall/_dl/webcall-apps-v1.0.0-2023-03-27.zip
+Download binary apps v1.0: [webcall-apps-v1.0.0-2023-03-27.zip](https://timur.mobi/webcall/_dl/webcall-apps-v1.0.0-2023-03-27.zip)
 
 Select one of the OS / architecture folders and copy the two apps to a local directory where they can be easily executed.
 
