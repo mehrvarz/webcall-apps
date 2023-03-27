@@ -189,10 +189,10 @@ func main() {
 	//ui.Bind("counterAdd", c.Add)
 	//ui.Bind("counterValue", c.Value)
 
+	/*
 	// Load HTML.
 	// You may also use `data:text/html,<base64>` approach to load initial HTML,
 	// e.g: ui.Load("data:text/html," + url.PathEscape(html))
-	/*
 	log.Println("net.Listen...")
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
