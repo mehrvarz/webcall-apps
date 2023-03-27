@@ -142,6 +142,15 @@ func main() {
 
 	// daemonize this process (by spawning a bg-child)
 	if !*bg {
+		if apptype=="callee" {
+			if strings.Index(calleeUrl,"?")>=0 {
+				calleeUrl += "&auto=true"
+			} else {
+				calleeUrl += "?auto=true"
+			}
+		}
+		log.Printf("[INFO] calleeUrl=%s\n",calleeUrl)
+
 		launch := os.Args[0]+" -B "+calleeUrl
 		if *logflag	{
 			launch = os.Args[0]+" -B -L "+calleeUrl
