@@ -76,6 +76,11 @@ If a call comes in, the app will play a ringtone.
 You can also use the callee app to make calls, for instance via the Contacts widget
 or via a Missed call entry.
 
+## More info:
+
+https://github.com/mehrvarz/webcall
+
+https://timur.mobi/webcall
 
 # Building
 
