@@ -19,10 +19,11 @@ for the following OS / architecture configurations:
 
 # Installation
 
-Select one of the OS / architecture folders and copy the two apps inside
-to a local directory where they can be easily executed.
+Download binary apps v1.0: https://timur.mobi/webcall/_dl/webcall-apps-v1.0.0-2023-03-27.zip
 
-Note that these apps can be lauched from the UI and from a terminal window.
+Select one of the OS / architecture folders and copy the two apps to a local directory where they can be easily executed.
+
+Note: These apps can be lauched from the UI as well as from the terminal window.
 
 Both apps make use of the Chrome / Chromium browser and need this browser to be installed on the machine.
 However, the webcall and callee apps run independently of your Chrome / Chromium browser.
