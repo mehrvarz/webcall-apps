@@ -1,7 +1,3 @@
-<div align="center">
-  <a href="https://timur.mobi/webcall"><img src="webroot/webcall-logo.png" alt="WebCall"></a>
-</div>
-
 # WebCall Apps
 
 Two WebRTC telephony apps:
@@ -20,9 +16,6 @@ available for the following OS / architecture configurations:
 
 - windows-amd64, windows-arm64
 
-<!--
-[https://timur.mobi/webcall](https://timur.mobi/webcall)
--->
 
 # Installation
 
@@ -82,6 +75,7 @@ If a call comes in, the app will play a ringtone.
 
 You can also use the callee app to make calls, for instance via the Contacts widget
 or via a Missed call entry.
+
 
 # Building
 
