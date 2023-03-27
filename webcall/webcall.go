@@ -171,9 +171,10 @@ func main() {
 	webcalldir := homedir+"/.webcall/"+apptype+"/"
 	ui, err := lorca.New("", webcalldir, 480, 520)
 	if err != nil {
-		// most likely: cannot find /usr/lib/chromium/chromium
+		// possible error: cannot find /usr/lib/chromium/chromium
+		// possible error: another instance alread open
+		// TODO close empty chrome window (but we have no ui object)
 		log.Fatalf("[ERROR] lorca.New ui=%v err=%v\n",ui,err)
-		// TODO empty chrome window may stay open
 	}
 	defer ui.Close()
 
