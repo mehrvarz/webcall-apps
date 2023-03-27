@@ -78,6 +78,7 @@ The .webcall.ini file may then look like this:
 
 Once the callee app is connected ("Go online") to the WebCall server, you can let it
 run in the background. If the callee app gets disconnected, it will try to reconnect automatically.
+If a call comes in, the app will play a ringtone.
 
 You can also use the callee app to make calls, for instance via the Contacts widget
 or via a Missed call entry.
