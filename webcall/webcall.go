@@ -10,14 +10,10 @@ import (
 	"os/signal"
 	"os/exec"
 	"strings"
-//	"net"
-//	"net/http"
-//	"syscall"
-//	"runtime"
-//	"sync"
 	"encoding/json"
 	"gopkg.in/ini.v1"
 	"github.com/zserge/lorca"
+	"github.com/hashicorp/logutils"
 )
 
 // Cookie struct
@@ -28,32 +24,11 @@ type Cookie struct {
 	Expires float64 `json:"expires"`
 }
 
-/*
-// Go types that are bound to the UI must be thread-safe, because each binding
-// is executed in its own goroutine. In this simple case we may use atomic
-// operations, but for more complex cases one should use proper synchronization.
-type counter struct {
-	sync.Mutex
-	count int
-}
-
-func (c *counter) Add(n int) {
-	c.Lock()
-	defer c.Unlock()
-	c.count = c.count + n
-}
-
-func (c *counter) Value() int {
-	c.Lock()
-	defer c.Unlock()
-	return c.count
-}
-*/
-
 var	builddate string
 var	codetag string
 var version = flag.Bool("version", false, "version info")
 var bg = flag.Bool("B", false, "backgound")
+var logflag = flag.Bool("L", false, "logflag")
 
 func main() {
 	flag.Parse()
@@ -65,12 +40,23 @@ func main() {
 		return
 	}
 
-	//log.Println("start...",len(flag.Args()), flag.Args())
-	//log.Printf("bg=%v\n",*bg)
+	logfilter := &logutils.LevelFilter{
+		Levels: []logutils.LogLevel{"INFO", "ERROR"},
+		MinLevel: logutils.LogLevel("ERROR"),
+		Writer: os.Stderr,
+	}
+	if *logflag {
+		logfilter = &logutils.LevelFilter{
+			Levels: []logutils.LogLevel{"INFO", "ERROR"},
+			MinLevel: logutils.LogLevel("INFO"),
+			Writer: os.Stderr,
+		}
+	}
+	log.SetOutput(logfilter)
 
 	homedir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatalf("# UserHomeDir err=%v\n",err)
+		log.Fatalf("[ERROR] UserHomeDir err=%v\n",err)
 	}
 
 	domain := "timur.mobi"
@@ -80,41 +66,40 @@ func main() {
 	if apptype=="callee" {
 		// callee mode: read config from local ini file
 		configFileName := "webcall.ini"
-		log.Printf("try local config file %s\n",configFileName)
+		log.Printf("[INFO] try local config file %s\n",configFileName)
 		configIni, err := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true,},configFileName)
 		if err != nil {
 			// read config from home ini file
 			configFileName = "~/.webcall.ini"
 			configFile := strings.Replace(configFileName,"~",homedir,1)
-			log.Printf("try home config file %s\n",configFile)
+			log.Printf("[INFO] try home config file %s\n",configFile)
 			configIni, err = ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true,},configFile)
 			if err != nil {
 				configIni = nil
-				log.Printf("no config file found err=%v\n", configFile, err)
+				log.Printf("[INFO] no config file found err=%v\n", configFile, err)
 			}
 		}
 		// read cfg from selected file
 		if configIni!=nil {
-			log.Printf("read config file...\n")
+			log.Printf("[INFO] read config file...\n")
 			config := readIniString(configIni, "arg", "", "")
 			if config!="" {
 				toks := strings.Split(config, " ")
 
 				if strings.HasPrefix(toks[0],"https://") {
 					calleeUrl = toks[0]
-					log.Printf("cfg calleeUrl=%s\n",calleeUrl)
+					log.Printf("[INFO] cfg calleeUrl=%s\n",calleeUrl)
 				} else {
 					if len(toks)>1 {
 						domain = toks[0]
 						calleeId = toks[1]
-						log.Printf("cfg domain=%s calleeId=%s\n",domain,calleeId)
+						log.Printf("[INFO] cfg domain=%s calleeId=%s\n",domain,calleeId)
 					} else {
 						calleeId = toks[0]
-						log.Printf("cfg calleeId=%s\n",calleeId)
+						log.Printf("[INFO] cfg calleeId=%s\n",calleeId)
 					}
 					if domain!="" && calleeId!="" {
 						calleeUrl = "https://"+domain+"/"+apptype+"/"+calleeId
-						//log.Printf("cfg calleeUrl=%s\n",calleeUrl)
 					}
 				}
 			}
@@ -125,12 +110,12 @@ func main() {
 	if len(flag.Args())>0 {
 		if strings.HasPrefix(flag.Arg(0),"https://") {
 			calleeUrl = flag.Arg(0)
-			log.Printf("calleeUrl=%s\n",calleeUrl)
+			log.Printf("[INFO] calleeUrl=%s\n",calleeUrl)
 		} else {
 			if len(flag.Args())>1 {
 				domain = flag.Arg(0)
 				calleeId = flag.Arg(1)
-				log.Printf("domain=%s calleeId=%s\n",domain,calleeId)
+				log.Printf("[INFO] domain=%s calleeId=%s\n",domain,calleeId)
 			} else {
 				// support "calleeId@domain"
 				idxAt := strings.Index(flag.Arg(0),"@")
@@ -140,44 +125,45 @@ func main() {
 				} else {
 					calleeId = flag.Arg(0)
 				}
-				log.Printf("calleeId=%s\n",calleeId)
+				log.Printf("[INFO] calleeId=%s\n",calleeId)
 			}
 			if domain!="" /*&& calleeId!=""*/ {
 				calleeUrl = "https://"+domain+"/"+apptype+"/"+calleeId
-				//log.Printf("calleeUrl=%s\n",calleeUrl)
 			}
 		}
 	}
 
 	if calleeId=="" && apptype=="callee" {
-		log.Fatalf("# missing calleeId (apptype==callee)\n")
+		log.Fatalf("[ERROR] missing calleeId (apptype==callee)\n")
 	}
 	if domain=="" {
-		log.Fatalf("# missing domain name (calleeId=%s)\n",calleeId)
+		log.Fatalf("[ERROR] missing domain name (calleeId=%s)\n",calleeId)
 	}
 
 	// daemonize this process (by spawning a bg-child)
 	if !*bg {
 		launch := os.Args[0]+" -B "+calleeUrl
-		log.Printf("launch=%s\n",launch)
+		if *logflag	{
+			launch = os.Args[0]+" -B -L "+calleeUrl
+		}
+		log.Printf("[INFO] launch %s\n",launch)
 	    cmd := exec.Command(os.Args[0], "-B", calleeUrl)
 		err := cmd.Start()
 		if err!=nil {
-			log.Printf("# exec err=%v\n",err)
+			log.Fatalf("[ERROR] exec err=%v\n",err)
 		}
 	    return
 	}
 
 	// this is the daemonized process
-
 	args := []string{} // "--start-fullscreen"
-	log.Printf("lorca.New args=%v\n",args)
-//	webcalldir := ""
+	log.Printf("[INFO] lorca.New args=%v\n",args)
+	//webcalldir := ""
 	webcalldir := homedir+"/.webcall/"+apptype+"/"
 	ui, err := lorca.New("", webcalldir, 480, 520)
 	if err != nil {
 		// most likely: cannot find /usr/lib/chromium/chromium
-		log.Fatalf("# lorca.New ui=%v err=%v\n",ui,err)
+		log.Fatalf("[ERROR] lorca.New ui=%v err=%v\n",ui,err)
 		// TODO empty chrome window may stay open
 	}
 	defer ui.Close()
@@ -186,27 +172,27 @@ func main() {
 		cookieHuman := Cookie{"timur.mobi","webcalluser","human",float64(time.Now().Unix()+500000)}
 		res := map[string]interface{}{}
 		raw, _ := json.Marshal(cookieHuman)
-		//log.Printf("cookie raw (%v)\n",raw)
+		//log.Printf("[INFO] cookie raw (%v)\n",raw)
 		_ = json.Unmarshal(raw, &res)
-		//log.Printf("cookie res (%v)\n",res)
+		//log.Printf("[INFO] cookie res (%v)\n",res)
 		ui.Send("Network.setCookie", res)
 	}
 
-	log.Println("ui.Bind('start')...")
+	log.Println("[INFO] ui.Bind('start')...")
 	// A simple way to know when UI is ready (uses body.onload event in JS)
 	ui.Bind("start", func() {
-		log.Println("UI is ready")
+		log.Println("[INFO] UI is ready")
 	})
 
 	// Create and bind Go object to the UI
-//	c := &counter{}
-//	ui.Bind("counterAdd", c.Add)
-//	ui.Bind("counterValue", c.Value)
+	//c := &counter{}
+	//ui.Bind("counterAdd", c.Add)
+	//ui.Bind("counterValue", c.Value)
 
 	// Load HTML.
 	// You may also use `data:text/html,<base64>` approach to load initial HTML,
 	// e.g: ui.Load("data:text/html," + url.PathEscape(html))
-/*
+	/*
 	log.Println("net.Listen...")
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -214,18 +200,19 @@ func main() {
 	}
 	defer ln.Close()
 	go http.Serve(ln, http.FileServer(FS))
-*/
-	log.Printf("ui.Load...")
+	*/
+
+	log.Printf("[INFO] ui.Load...")
 	ui.Load(calleeUrl)
 
-/*
+	/*
 	// You may use console.log to debug your JS code, it will be printed via
 	// log.Println(). Also exceptions are printed in a similar manner.
 	ui.Eval(`
 		console.log("Hello, world!");
 		console.log('Multiple values:', [1, false, {"x":5}]);
 	`)
-*/
+	*/
 
 	// Wait until the interrupt signal arrives or browser window is closed
 	sigc := make(chan os.Signal)
@@ -235,5 +222,5 @@ func main() {
 	case <-ui.Done():
 	}
 
-	log.Println("exiting...")
+	log.Println("[INFO] exiting...")
 }
